@@ -283,13 +283,12 @@
     <script>
         // Airtable 配置
         const AIRTABLE_CONFIG = {
-            apiKey: 'patjPfPKQ1bqv2JAN.5e58db548969128df057770cbce60c06750b19887cc2af9b3af52dea8be8afdd',
+            apiKey: 'patjPfPKQ1bqv2JAN.54a60a22c5cff01c9a8600219487ef47abda8895f9fa3f6a847fff10e1e77f03',
             baseId: 'appPqcd19omOhVVM0',
-            tableId: 'tbluyukuLRZnfRKZG',
             tableName: 'Keys'
         };
         
-        const API_BASE = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${AIRTABLE_CONFIG.tableName}`;
+        const API_BASE = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/Keys`;
         
         let currentFilter = 'all';
         let currentDistributeKey = null;
@@ -306,7 +305,7 @@
             app.classList.add('loading');
             
             try {
-                const response = await fetch(`${API_BASE}?fields[]=Key&fields[]=Type&fields[]=Status&fields[]=DistributedAt&fields[]=UsedAt`, {
+                const response = await fetch(`${API_BASE}`, {
                     headers: {
                         'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`
                     }
@@ -314,8 +313,15 @@
                 
                 const data = await response.json();
                 
+                console.log('Airtable response:', data);
+                
                 if (data.error) {
                     showToast('❌ 获取数据失败：' + data.error.message);
+                    document.getElementById('key-table-body').innerHTML = 
+                        `<tr><td colspan="5" style="text-align:center;padding:40px;color:#e53e3e;">
+                            ❌ 错误：${data.error.message}<br>
+                            请检查：1) Token 是否有效 2) 表格名称是否正确 3) Token 权限是否包含读取权限
+                        </td></tr>`;
                     return;
                 }
                 
@@ -330,7 +336,6 @@
                 
                 updateStats();
                 renderKeyTable();
-                showToast('✅ 数据已刷新');
             } catch (error) {
                 showToast('❌ 网络错误：' + error.message);
             } finally {
