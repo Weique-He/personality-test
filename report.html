@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度性格测试完整报告</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header .type-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .section h3 {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        .dimension {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .dimension-name {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .dimension-bar {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .dimension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+
+        .dimension-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 10px 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: 700;
+        }
+
+        .warning-list li:before {
+            content: "⚠";
+            color: #ed8936;
+        }
+
+        .career-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .career-card {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .career-card h4 {
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .career-card p {
+            color: #718096;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .advice-box {
+            background: #fff5f7;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #f687b3;
+            margin: 15px 0;
+        }
+
+        .advice-box h4 {
+            color: #742a5d;
+            margin-bottom: 10px;
+        }
+
+        .advice-box p {
+            color: #742a5d;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: #f7fafc;
+            padding: 30px 40px;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .footer p {
+            margin: 10px 0;
+        }
+
+        .disclaimer {
+            background: #fef5e7;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ed8936;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #744210;
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            .career-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 深度性格测试完整报告</h1>
+            <p>专业心理学分析 · 职业发展指南 · 情感关系解读</p>
+            <div class="type-badge" id="user-type">🌟 魅力领导者</div>
+        </div>
+
+        <div class="content">
+            <!-- 性格维度分析 -->
+            <div class="section">
+                <h2>📊 性格维度分析</h2>
+                
+                <div class="dimension">
+                    <div class="dimension-name">外向 (E) - 内向 (I)</div>
+                    <div class="dimension-bar">
+                        <div class="dimension-fill" style="width: 65%;"></div>
+                    </div>
+                    <div class="dimension-labels">
+                        <span>内向 0%</span>
+                        <span>你的得分：65% 外向</span>
+                        <span>外向 100%</span>
+                    </div>
+                    <p style="margin-top: 15px; color: #4a5568; line-height: 1.6;">
+                        你倾向于外向型性格，喜欢与人交往，从社交中获取能量。
+                        你通常表现得开朗、活跃，善于表达自己，在团队中容易成为焦点。
+                    </p>
+                </div>
+
+                <div class="dimension">
+                    <div class="dimension-name">理性 (T) - 感性 (F)</div>
+                    <div class="dimension-bar">
+                        <div class="dimension-fill" style="width: 45%;"></div>
+                    </div>
+                    <div class="dimension-labels">
+                        <span>感性 0%</span>
+                        <span>你的得分：45% 理性</span>
+                        <span>理性 100%</span>
+                    </div>
+                    <p style="margin-top: 15px; color: #4a5568; line-height: 1.6;">
+                        你在决策时会综合考虑理性和感性因素，既能逻辑分析，也会照顾他人感受。
+                        这让你成为优秀的沟通者和协调者。
+                    </p>
+                </div>
+
+                <div class="dimension">
+                    <div class="dimension-name">计划 (J) - 灵活 (P)</div>
+                    <div class="dimension-bar">
+                        <div class="dimension-fill" style="width: 70%;"></div>
+                    </div>
+                    <div class="dimension-labels">
+                        <span>灵活 0%</span>
+                        <span>你的得分：70% 计划</span>
+                        <span>计划 100%</span>
+                    </div>
+                    <p style="margin-top: 15px; color: #4a5568; line-height: 1.6;">
+                        你喜欢有计划、有条理的生活方式。
+                        做事前会制定详细计划，按部就班地执行，注重效率和结果。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 职业发展建议 -->
+            <div class="section">
+                <h2>💼 职业发展建议</h2>
+                
+                <h3>适合你的职业类型</h3>
+                <div class="career-grid">
+                    <div class="career-card">
+                        <h4>🎯 管理岗位</h4>
+                        <p>团队领导、项目经理、部门主管等，发挥你的组织和领导才能。</p>
+                    </div>
+                    <div class="career-card">
+                        <h4>💬 销售/市场</h4>
+                        <p>销售经理、市场策划、公关等，利用你的沟通和影响力。</p>
+                    </div>
+                    <div class="career-card">
+                        <h4>🎨 创意行业</h4>
+                        <p>产品经理、设计师、内容创作等，结合你的创意思维和执行力。</p>
+                    </div>
+                    <div class="career-card">
+                        <h4>👥 人力资源</h4>
+                        <p>HR、培训师、职业顾问等，发挥你的人际洞察力。</p>
+                    </div>
+                </div>
+
+                <h3>你的职场优势</h3>
+                <ul class="feature-list">
+                    <li>出色的沟通和表达能力，容易获得他人信任</li>
+                    <li>较强的组织和规划能力，能高效完成任务</li>
+                    <li>善于协调团队关系，促进合作</li>
+                    <li>目标导向，有较强的执行力</li>
+                    <li>适应能力强，能在不同环境中快速调整</li>
+                </ul>
+
+                <h3>需要改进的地方</h3>
+                <ul class="feature-list warning-list">
+                    <li>有时过于追求完美，可能给自己太大压力</li>
+                    <li>在快节奏环境中需要学会适当放手</li>
+                </ul>
+            </div>
+
+            <!-- 情感关系指南 -->
+            <div class="section">
+                <h2>💕 情感关系指南</h2>
+                
+                <h3>你的恋爱风格</h3>
+                <div class="advice-box">
+                    <p>你在感情中表现得主动而热情，喜欢明确表达爱意。
+                    你重视承诺和责任感，会为关系付出努力。
+                    同时，你也需要伴侣的理解和支持，希望对方能认可你的付出。</p>
+                </div>
+
+                <h3>适合的伴侣类型</h3>
+                <ul class="feature-list">
+                    <li>能够欣赏你的领导能力，同时保持独立性</li>
+                    <li>情绪稳定，能给你提供情感支持</li>
+                    <li>有共同目标和价值观，愿意一起成长</li>
+                    <li>善于沟通，能理解你的需求和想法</li>
+                </ul>
+
+                <h3>相处建议</h3>
+                <ul class="feature-list">
+                    <li>学会倾听伴侣的想法，不要总是主导对话</li>
+                    <li>给对方一些独立空间，不要过度控制</li>
+                    <li>表达感谢和欣赏，增强情感连接</li>
+                    <li>在冲突中保持冷静，避免情绪化决策</li>
+                </ul>
+            </div>
+
+            <!-- 个人成长路径 -->
+            <div class="section">
+                <h2>🌱 个人成长路径</h2>
+                
+                <h3>短期目标（1-3 个月）</h3>
+                <div class="advice-box" style="background: #f0f4ff; border-left-color: #667eea;">
+                    <p><strong>技能提升：</strong>选择一个与职业相关的技能进行深入学习</p>
+                    <p><strong>健康习惯：</strong>建立规律的作息和运动习惯</p>
+                    <p><strong>社交拓展：</strong>参加 2-3 个行业交流活动，拓展人脉</p>
+                </div>
+
+                <h3>中期目标（6-12 个月）</h3>
+                <div class="advice-box" style="background: #f0fff4; border-left-color: #48bb78;">
+                    <p><strong>职业进阶：</strong>争取晋升或承担更重要的项目</p>
+                    <p><strong>自我认知：</strong>通过阅读、课程等方式深入了解自己</p>
+                    <p><strong>财务规划：</strong>建立合理的理财计划和应急基金</p>
+                </div>
+
+                <h3>长期发展方向</h3>
+                <div class="advice-box" style="background: #fff5f7; border-left-color: #f687b3;">
+                    <p>基于你的性格特点，建议往<strong>管理型</strong>或<strong>专家型</strong>方向发展。</p>
+                    <p>管理型路径：团队领导 → 部门主管 → 高层管理</p>
+                    <p>专家型路径：专业技能深耕 → 行业顾问 → 独立咨询</p>
+                    <p style="margin-top: 10px;">关键是找到你真正热爱的领域，并持续投入时间和精力。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p> 报告生成日期：2024 年 3 月 24 日</p>
+            <p>💬 如有疑问，请联系客服微信</p>
+            <div class="disclaimer">
+                ⚠️ 免责声明：本报告基于心理学理论生成，仅供娱乐和参考，不构成专业职业建议或心理咨询。
+                如有职业发展或心理健康方面的专业需求，请咨询相关领域专业人士。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 验证密钥
+        const urlParams = new URLSearchParams(window.location.search);
+        const key = urlParams.get('key');
+        const type = urlParams.get('type');
+        
+        // 简单密钥验证（实际应该用后端验证）
+        const validKeyPattern = /^[A-Z]{2}-[A-Z0-9]{4}$/i;
+        
+        if (key && validKeyPattern.test(key)) {
+            // 密钥格式正确，显示报告
+            if (type) {
+                const typeNames = {
+                    'EJ': '🌟 魅力领导者',
+                    'EP': '🎨 创意探索者',
+                    'IJ': '🏆 稳健策划师',
+                    'IP': '🦋 自由思想家'
+                };
+                document.getElementById('user-type').textContent = typeNames[type] || '✨ 独特性格';
+            }
+        } else if (!key && !type) {
+            // 没有密钥，跳转到首页
+            document.body.innerHTML = `
+                <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);">
+                    <div style="background:white;padding:40px;border-radius:20px;text-align:center;max-width:500px;">
+                        <h1 style="color:#2d3748;margin-bottom:20px;">🔒 需要解锁密钥</h1>
+                        <p style="color:#718096;margin-bottom:30px;line-height:1.6;">
+                            完整报告需要解锁密钥才能查看。<br>
+                            请先付款获取密钥。
+                        </p>
+                        <a href="index.html" style="display:inline-block;padding:15px 40px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-decoration:none;border-radius:50px;font-weight:600;">
+                            返回测试页面
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
