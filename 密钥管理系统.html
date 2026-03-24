@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密钥管理系统 - 性格测试</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle { color: #718096; margin-bottom: 30px; }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-card.green { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .stat-card.orange { background: linear-gradient(135deg, #ed8936, #dd6b20); }
+        .stat-card.red { background: linear-gradient(135deg, #f56565, #e53e3e); }
+        .stat-number { font-size: 2.5rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9rem; opacity: 0.9; }
+        
+        /* 操作区 */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-success { background: #48bb78; color: white; }
+        .btn-warning { background: #ed8936; color: white; }
+        .btn-danger { background: #f56565; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        
+        /* 生成密钥表单 */
+        .generate-form {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: none;
+        }
+        .generate-form.show { display: block; }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .form-group { flex: 1; min-width: 200px; }
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* 密钥列表 */
+        .key-list {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        .key-list h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .key-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .key-table th, .key-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .key-table th {
+            background: #edf2f7;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        .key-table tr:hover { background: #f0f4ff; }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-available { background: #c6f6d5; color: #276749; }
+        .status-distributed { background: #feebc8; color: #c05621; }
+        .status-used { background: #fed7e2; color: #831843; }
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+        .action-btn.copy { background: #667eea; color: white; }
+        .action-btn.delete { background: #f56565; color: white; }
+        
+        /* 弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-key {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        /* 提示 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 密钥管理系统</h1>
+        <p class="subtitle">性格测试密钥生成、分发、验证管理</p>
+        
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-keys">0</div>
+                <div class="stat-label">总密钥数</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-number" id="available-keys">0</div>
+                <div class="stat-label">可用密钥</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-number" id="distributed-keys">0</div>
+                <div class="stat-label">已分发</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-number" id="used-keys">0</div>
+                <div class="stat-label">已使用</div>
+            </div>
+        </div>
+        
+        <!-- 操作区 -->
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="toggleGenerateForm()">➕ 生成密钥</button>
+            <button class="btn btn-success" onclick="distributeKey()">📤 分发密钥</button>
+            <button class="btn btn-warning" onclick="exportKeys()">📥 导出密钥</button>
+            <button class="btn btn-danger" onclick="clearUsedKeys()">🗑️ 清空已使用</button>
+        </div>
+        
+        <!-- 生成密钥表单 -->
+        <div class="generate-form" id="generate-form">
+            <h3 style="margin-bottom:20px;color:#2d3748;">生成新密钥</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>性格类型：</label>
+                    <select id="gen-type">
+                        <option value="EJ">🌟 魅力领导者 (EJ)</option>
+                        <option value="EP">🎨 创意探索者 (EP)</option>
+                        <option value="IJ">🏆 稳健策划师 (IJ)</option>
+                        <option value="IP">🦋 自由思想家 (IP)</option>
+                        <option value="ALL">🎲 混合类型（随机）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>生成数量：</label>
+                    <input type="number" id="gen-count" value="10" min="1" max="100">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="generateKeys()">生成密钥</button>
+        </div>
+        
+        <!-- 密钥列表 -->
+        <div class="key-list">
+            <h3>📋 密钥列表</h3>
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterKeys('all')">全部</button>
+                <button class="filter-btn" onclick="filterKeys('available')">可用</button>
+                <button class="filter-btn" onclick="filterKeys('distributed')">已分发</button>
+                <button class="filter-btn" onclick="filterKeys('used')">已使用</button>
+            </div>
+            <table class="key-table">
+                <thead>
+                    <tr>
+                        <th>密钥</th>
+                        <th>类型</th>
+                        <th>状态</th>
+                        <th>分发时间</th>
+                        <th>使用时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="key-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 分发密钥弹窗 -->
+    <div class="modal" id="distribute-modal">
+        <div class="modal-content">
+            <h2 style="color:#2d3748;">📤 分发密钥</h2>
+            <p style="color:#718096;margin:20px 0;">选择一个可用密钥发送给用户</p>
+            <div class="modal-key" id="distribute-key">XX-0000</div>
+            <button class="btn btn-primary" onclick="copyDistributeKey()">📋 复制密钥</button>
+            <button class="btn" onclick="closeDistributeModal()" style="margin-left:10px;">取消</button>
+        </div>
+    </div>
+    
+    <!-- 提示 -->
+    <div class="toast" id="toast">✅ 操作成功</div>
+    
+    <script>
+        let currentFilter = 'all';
+        let currentDistributeKey = null;
+        
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            renderKeyTable();
+        });
+        
+        // 获取密钥库
+        function getKeyStore() {
+            return JSON.parse(localStorage.getItem('keyStore') || '[]');
+        }
+        
+        // 保存密钥库
+        function saveKeyStore(keys) {
+            localStorage.setItem('keyStore', JSON.stringify(keys));
+            updateStats();
+            renderKeyTable();
+        }
+        
+        // 生成密钥
+        function generateKeys() {
+            const type = document.getElementById('gen-type').value;
+            const count = parseInt(document.getElementById('gen-count').value);
+            
+            const keys = getKeyStore();
+            const types = type === 'ALL' ? ['EJ', 'EP', 'IJ', 'IP'] : [type];
+            
+            for (let i = 0; i < count; i++) {
+                const t = types[Math.floor(Math.random() * types.length)];
+                // 生成 8 位随机码（4 字母 +4 数字）
+                const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                const numbers = '23456789';
+                let code = '';
+                for (let j = 0; j < 4; j++) {
+                    code += letters.charAt(Math.floor(Math.random() * letters.length));
+                }
+                for (let j = 0; j < 4; j++) {
+                    code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+                }
+                const key = `${t}-${code}`;
+                
+                // 检查是否重复
+                if (!keys.find(k => k.key === key)) {
+                    keys.push({
+                        key: key,
+                        type: t,
+                        code: code,
+                        status: 'available',
+                        createdAt: new Date().toISOString(),
+                        distributedAt: null,
+                        usedAt: null
+                    });
+                }
+            }
+            
+            saveKeyStore(keys);
+            showToast(`✅ 成功生成 ${count} 个密钥`);
+            document.getElementById('generate-form').classList.remove('show');
+        }
+        
+        // 分发密钥
+        function distributeKey() {
+            const keys = getKeyStore();
+            const available = keys.filter(k => k.status === 'available');
+            
+            if (available.length === 0) {
+                alert('❌ 没有可用密钥！请先生成密钥。');
+                return;
+            }
+            
+            // 随机选择一个可用密钥
+            const key = available[Math.floor(Math.random() * available.length)];
+            key.status = 'distributed';
+            key.distributedAt = new Date().toISOString();
+            
+            saveKeyStore(keys);
+            
+            // 显示弹窗
+            currentDistributeKey = key;
+            document.getElementById('distribute-key').textContent = key.key;
+            document.getElementById('distribute-modal').classList.add('show');
+        }
+        
+        // 复制分发密钥
+        function copyDistributeKey() {
+            if (currentDistributeKey) {
+                navigator.clipboard.writeText(currentDistributeKey.key).then(() => {
+                    showToast('✅ 密钥已复制！');
+                    closeDistributeModal();
+                });
+            }
+        }
+        
+        // 关闭分发弹窗
+        function closeDistributeModal() {
+            document.getElementById('distribute-modal').classList.remove('show');
+            currentDistributeKey = null;
+        }
+        
+        // 验证密钥（用于测试网页调用）
+        function validateKey(keyInput) {
+            const keys = getKeyStore();
+            const key = keys.find(k => k.key === keyInput);
+            
+            if (!key) {
+                return { valid: false, message: '密钥不存在' };
+            }
+            
+            if (key.status === 'used') {
+                return { valid: false, message: '密钥已使用' };
+            }
+            
+            if (key.status === 'distributed') {
+                // 标记为已使用
+                key.status = 'used';
+                key.usedAt = new Date().toISOString();
+                saveKeyStore(keys);
+                return { valid: true, type: key.type, message: '验证成功' };
+            }
+            
+            // 如果状态是 available，也允许使用（兼容直接输入的情况）
+            key.status = 'used';
+            key.usedAt = new Date().toISOString();
+            saveKeyStore(keys);
+            return { valid: true, type: key.type, message: '验证成功' };
+        }
+        
+        // 筛选密钥
+        function filterKeys(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(filter === 'all' ? '全部' : 
+                    filter === 'available' ? '可用' : 
+                    filter === 'distributed' ? '已分发' : '已使用'));
+            });
+            renderKeyTable();
+        }
+        
+        // 渲染密钥表格
+        function renderKeyTable() {
+            const keys = getKeyStore();
+            const tbody = document.getElementById('key-table-body');
+            
+            let filtered = keys;
+            if (currentFilter !== 'all') {
+                filtered = keys.filter(k => k.status === currentFilter);
+            }
+            
+            // 按创建时间倒序
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            tbody.innerHTML = filtered.map(k => `
+                <tr>
+                    <td style="font-family:monospace;font-weight:600;color:#667eea;">${k.key}</td>
+                    <td>${getTypeName(k.type)}</td>
+                    <td><span class="status-badge status-${k.status}">${getStatusName(k.status)}</span></td>
+                    <td>${k.distributedAt ? formatTime(k.distributedAt) : '-'}</td>
+                    <td>${k.usedAt ? formatTime(k.usedAt) : '-'}</td>
+                    <td>
+                        <button class="action-btn copy" onclick="copyKey('${k.key}')">📋</button>
+                        <button class="action-btn delete" onclick="deleteKey('${k.key}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 更新统计
+        function updateStats() {
+            const keys = getKeyStore();
+            document.getElementById('total-keys').textContent = keys.length;
+            document.getElementById('available-keys').textContent = keys.filter(k => k.status === 'available').length;
+            document.getElementById('distributed-keys').textContent = keys.filter(k => k.status === 'distributed').length;
+            document.getElementById('used-keys').textContent = keys.filter(k => k.status === 'used').length;
+        }
+        
+        // 复制密钥
+        function copyKey(key) {
+            navigator.clipboard.writeText(key).then(() => {
+                showToast('✅ 密钥已复制');
+            });
+        }
+        
+        // 删除密钥
+        function deleteKey(key) {
+            if (confirm(`确定要删除密钥 ${key} 吗？`)) {
+                const keys = getKeyStore().filter(k => k.key !== key);
+                saveKeyStore(keys);
+                showToast('✅ 密钥已删除');
+            }
+        }
+        
+        // 清空已使用
+        function clearUsedKeys() {
+            if (confirm('确定要清空所有已使用的密钥吗？\n\n此操作不可恢复！')) {
+                const keys = getKeyStore().filter(k => k.status !== 'used');
+                saveKeyStore(keys);
+                showToast('✅ 已清空已使用的密钥');
+            }
+        }
+        
+        // 导出密钥
+        function exportKeys() {
+            const keys = getKeyStore();
+            const csv = [
+                ['密钥', '类型', '状态', '创建时间', '分发时间', '使用时间'].join(','),
+                ...keys.map(k => [k.key, k.type, k.status, k.createdAt, k.distributedAt || '', k.usedAt || ''].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `密钥导出_${new Date().toLocaleDateString()}.csv`;
+            a.click();
+            showToast('✅ 密钥已导出');
+        }
+        
+        // 显示/隐藏生成表单
+        function toggleGenerateForm() {
+            document.getElementById('generate-form').classList.toggle('show');
+        }
+        
+        // 辅助函数
+        function getTypeName(type) {
+            const names = {
+                'EJ': '🌟 魅力领导者',
+                'EP': '🎨 创意探索者',
+                'IJ': '🏆 稳健策划师',
+                'IP': '🦋 自由思想家'
+            };
+            return names[type] || type;
+        }
+        
+        function getStatusName(status) {
+            const names = {
+                'available': '可用',
+                'distributed': '已分发',
+                'used': '已使用'
+            };
+            return names[status] || status;
+        }
+        
+        function formatTime(iso) {
+            return new Date(iso).toLocaleString('zh-CN', { 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

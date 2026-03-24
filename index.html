@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度性格测试 - 发现真实的自己</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .page { display: none; padding: 40px; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero { text-align: center; }
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { font-size: 1.1rem; color: #718096; margin-bottom: 30px; }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        .note { margin-top: 20px; color: #a0aec0; font-size: 0.9rem; }
+        .progress-container { margin-bottom: 30px; }
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 10%;
+        }
+        .question-count { text-align: right; color: #718096; font-size: 0.9rem; }
+        .question-card {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 16px;
+        }
+        .question-text {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 18px 24px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #4a5568;
+            text-align: left;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .result-card { text-align: center; }
+        .result-header { margin-bottom: 30px; }
+        .type-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        #result-title { font-size: 1.8rem; color: #2d3748; margin-bottom: 20px; }
+        .result-preview {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        #result-preview-text { color: #4a5568; line-height: 1.8; font-size: 1rem; }
+        
+        /* 支付弹窗样式 */
+        .payment-info { margin-top: 15px; }
+        .info-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        .qr-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .qr-section {
+            text-align: center;
+            flex: 1;
+            min-width: 140px;
+        }
+        .qr-section h4 { margin: 0 0 10px 0; font-size: 0.95rem; color: #4a5568; }
+        .qr-code {
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            object-fit: cover;
+        }
+        .qr-tip { margin-top: 8px; font-size: 0.85rem; color: #718096; }
+        .tips {
+            background: #fff5f7;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #f687b3;
+            margin-bottom: 15px;
+        }
+        .tips p { margin: 8px 0; font-size: 0.85rem; color: #742a5d; line-height: 1.5; }
+        .key-input-section {
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .key-input-section label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        #unlock-key {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        #unlock-key:focus { outline: none; border-color: #667eea; }
+        .btn-unlock {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-unlock:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .key-error {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+            min-height: 20px;
+        }
+        .key-tips {
+            background: #fff5f7;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #f687b3;
+        }
+        .key-tips p { color: #742a5d; font-weight: 600; margin-bottom: 10px; }
+        .key-tips ol { padding-left: 20px; color: #742a5d; line-height: 1.8; }
+        .key-tips li { margin: 5px 0; }
+        .support-info {
+            text-align: center;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        /* 导航按钮 */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e2e8f0;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover:not(:disabled) { border-color: #667eea; background: #f7fafc; }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        #next-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        #next-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        #next-btn:disabled { background: #cbd5e0; }
+        
+        @media (max-width: 640px) {
+            .page { padding: 30px 20px; }
+            .hero h1 { font-size: 2rem; }
+            .features { flex-direction: column; align-items: center; }
+            .btn-primary { padding: 15px 40px; font-size: 1.1rem; }
+            .question-text { font-size: 1.1rem; }
+            .option { padding: 15px 18px; font-size: 0.95rem; }
+            .qr-container { flex-direction: column; align-items: center; }
+            .payment-steps { flex-direction: column; gap: 15px; }
+            .step { display: flex; align-items: center; gap: 10px; text-align: left; }
+            .step-number { margin: 0; flex-shrink: 0; }
+            .modal-content { width: 95%; max-height: 95vh; }
+            .navigation-buttons { flex-direction: column; }
+            .nav-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 开始页面 -->
+        <div id="start-page" class="page active">
+            <div class="hero">
+                <h1>🔮 深度性格测试</h1>
+                <p class="subtitle">10 道精选题目，揭示你内心深处的性格密码</p>
+                <div class="features">
+                    <div class="feature"><span class="icon">🎯</span><span>专业心理学基础</span></div>
+                    <div class="feature"><span class="icon">⏱️</span><span>仅需 3 分钟</span></div>
+                    <div class="feature"><span class="icon">📊</span><span>详细分析报告</span></div>
+                </div>
+                <button id="start-btn" class="btn-primary">开始测试</button>
+                <p class="note">已有 100,000+ 用户参与测试</p>
+            </div>
+        </div>
+
+        <!-- 测试页面 -->
+        <div id="quiz-page" class="page">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress-fill"></div>
+                </div>
+                <div class="question-count">
+                    <span id="current-q">1</span> / 10
+                </div>
+            </div>
+            <div class="question-card">
+                <h2 id="question-text" class="question-text"></h2>
+                <div id="options" class="options"></div>
+                <div class="navigation-buttons">
+                    <button id="prev-btn" class="nav-btn" onclick="prevQuestion()">⬅ 上一题</button>
+                    <button id="next-btn" class="nav-btn" onclick="nextQuestion()" disabled>下一题 ➡</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="page">
+            <div class="result-card">
+                <div class="result-header">
+                    <div class="type-badge" id="type-badge"></div>
+                    <h2 id="result-title"></h2>
+                </div>
+                <div class="result-preview">
+                    <p id="result-preview-text"></p>
+                </div>
+                <div class="locked-content" style="background:linear-gradient(135deg,#fff5f7,#fed7e2);padding:30px;border-radius:16px;margin-bottom:25px;border:2px dashed #f687b3;">
+                    <div style="font-size:3rem;margin-bottom:15px;">🔒</div>
+                    <h3 style="color:#742a5d;font-size:1.4rem;margin-bottom:20px;">解锁完整报告</h3>
+                    <div class="payment-info">
+                        <div class="info-tabs">
+                            <button class="tab-btn active" onclick="switchTab('pay')">方式 1：扫码付款</button>
+                            <button class="tab-btn" onclick="switchTab('key')">方式 2：已有密钥</button>
+                        </div>
+                        <div id="pay-tab" class="tab-content active">
+                            <div class="qr-container">
+                                <div class="qr-section">
+                                    <h4>💰 收款码</h4>
+                                    <img src="./收款码.png" alt="收款码" class="qr-code">
+                                    <p class="qr-tip">微信扫码支付 ¥1.99</p>
+                                </div>
+                                <div class="qr-section">
+                                    <h4>🤖 客服微信</h4>
+                                    <img src="./客服微信.png" alt="客服微信" class="qr-code">
+                                    <p class="qr-tip">扫码添加客服</p>
+                                </div>
+                            </div>
+                            <div class="tips">
+                                <p>✅ 付款后添加客服微信：wzsOctober</p>
+                                <p>✅ 客服发送解锁密钥</p>
+                                <p>✅ 返回本网页输入密钥解锁报告</p>
+                            </div>
+                        </div>
+                        <div id="key-tab" class="tab-content">
+                            <div class="key-input-section">
+                                <label for="unlock-key">请输入解锁密钥：</label>
+                                <input type="text" id="unlock-key" placeholder="格式：EJ-ABCD1234" maxlength="15" style="text-transform:uppercase; letter-spacing: 1px;">
+                                <button class="btn-unlock" onclick="validateAndUnlock()">🔓 解锁完整报告</button>
+                                <p class="key-error" id="key-error"></p>
+                            </div>
+                            <div class="key-tips">
+                                <p>💡 密钥获取方式：</p>
+                                <ol>
+                                    <li>扫码支付 ¥1.99</li>
+                                    <li>添加客服微信：wzsOctober</li>
+                                    <li>发送付款截图</li>
+                                    <li>客服发送解锁密钥</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="support-info">
+                        <p>💬 遇到问题？联系微信：<strong style="color:#667eea;">wzsOctober</strong></p>
+                    </div>
+                </div>
+                <button id="restart-btn" class="btn-secondary" style="background:white;color:#667eea;border:2px solid #667eea;padding:15px 40px;font-size:1rem;font-weight:600;border-radius:50px;cursor:pointer;transition:all 0.3s;" onclick="restartQuiz()">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试题目 - 基于 MBTI 理论
+        const questions = [
+            {
+                text: "在社交聚会上，你通常会？",
+                options: [
+                    { text: "主动认识新朋友，享受成为焦点", dim: "E" },
+                    { text: "和熟悉的人聊天，保持舒适圈", dim: "I" }
+                ]
+            },
+            {
+                text: "面对重要决策时，你更倾向于？",
+                options: [
+                    { text: "列出利弊分析，理性判断", dim: "T" },
+                    { text: "听从内心感受，追随直觉", dim: "F" }
+                ]
+            },
+            {
+                text: "你的工作风格更接近？",
+                options: [
+                    { text: "制定详细计划，按部就班", dim: "J" },
+                    { text: "灵活应对，随机应变", dim: "P" }
+                ]
+            },
+            {
+                text: "学习新知识时，你更喜欢？",
+                options: [
+                    { text: "系统学习，建立完整框架", dim: "S" },
+                    { text: "探索兴趣点，跳跃式学习", dim: "N" }
+                ]
+            },
+            {
+                text: "遇到冲突时，你的反应是？",
+                options: [
+                    { text: "直接面对，寻求解决方案", dim: "T" },
+                    { text: "避免冲突，保持和谐", dim: "F" }
+                ]
+            },
+            {
+                text: "周末你更愿意如何度过？",
+                options: [
+                    { text: "和朋友聚会，外出活动", dim: "E" },
+                    { text: "独处充电，做自己喜欢的事", dim: "I" }
+                ]
+            },
+            {
+                text: "描述你的沟通风格？",
+                options: [
+                    { text: "直接明了，直奔主题", dim: "T" },
+                    { text: "委婉温和，考虑他人感受", dim: "F" }
+                ]
+            },
+            {
+                text: "对于未来，你的态度是？",
+                options: [
+                    { text: "有清晰规划和目标", dim: "J" },
+                    { text: "保持开放，顺其自然", dim: "P" }
+                ]
+            },
+            {
+                text: "团队合作中，你通常扮演？",
+                options: [
+                    { text: "领导者，统筹全局", dim: "E" },
+                    { text: "执行者，完成任务", dim: "S" }
+                ]
+            },
+            {
+                text: "压力之下，你会？",
+                options: [
+                    { text: "更加专注，效率提升", dim: "J" },
+                    { text: "寻求支持，与人倾诉", dim: "E" }
+                ]
+            }
+        ];
+
+        // 性格类型结果
+        const personalityTypes = {
+            "EJ": { title: "🌟 魅力领导者", preview: "你天生具有领导才能，善于组织和管理。外向性格让你轻松建立人脉，判断力使你能够做出明智决策。" },
+            "EP": { title: "🎨 创意探索者", preview: "你充满活力和创造力，喜欢尝试新事物。适应能力让你在各种环境中都能如鱼得水。" },
+            "IJ": { title: "🏆 稳健策划师", preview: "你深思熟虑，做事有条理。内省让你能够深入思考，计划性使你能够稳步达成目标。" },
+            "IP": { title: "🦋 自由思想家", preview: "你独立而灵活，追求内心的自由。适应性让你能够从容应对变化，保持内心的平静。" }
+        };
+
+        // 状态管理
+        let currentQuestion = 0;
+        let answers = new Array(10).fill(null);
+        let selectedOption = null; // 当前题目选中的选项索引
+
+        // DOM 元素
+        const startPage = document.getElementById('start-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultPage = document.getElementById('result-page');
+        const startBtn = document.getElementById('start-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const progressFill = document.getElementById('progress');
+        const currentQSpan = document.getElementById('current-q');
+        const typeBadge = document.getElementById('type-badge');
+        const resultTitle = document.getElementById('result-title');
+        const resultPreviewText = document.getElementById('result-preview-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // 初始化
+        function init() {
+            startBtn.addEventListener('click', startQuiz);
+        }
+
+        // 开始测试
+        function startQuiz() {
+            startPage.classList.remove('active');
+            quizPage.classList.add('active');
+            currentQuestion = 0;
+            answers.fill(null);
+            selectedOption = null;
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            questionText.textContent = q.text;
+            currentQSpan.textContent = currentQuestion + 1;
+            progressFill.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const el = document.createElement('div');
+                el.className = 'option';
+                el.textContent = opt.text;
+                el.onclick = () => selectOption(idx);
+                if (selectedOption === idx) {
+                    el.classList.add('selected');
+                }
+                optionsContainer.appendChild(el);
+            });
+            
+            updateButtons();
+        }
+
+        // 选择选项（修复：每次只能选一个）
+        function selectOption(idx) {
+            selectedOption = idx;
+            answers[currentQuestion] = questions[currentQuestion].options[idx].dim;
+            
+            // 更新 UI：清除所有选中，只保留当前选中的
+            const opts = optionsContainer.querySelectorAll('.option');
+            opts.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === idx);
+            });
+            
+            updateButtons();
+        }
+
+        // 更新按钮状态
+        function updateButtons() {
+            prevBtn.disabled = (currentQuestion === 0);
+            nextBtn.disabled = (selectedOption === null);
+            nextBtn.innerHTML = (currentQuestion === questions.length - 1) ? '完成测试 ✓' : '下一题 ➡';
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                selectedOption = answers[currentQuestion] ? 
+                    questions[currentQuestion].options.findIndex(o => o.dim === answers[currentQuestion]) : null;
+                showQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (selectedOption === null) {
+                alert('请先选择一个答案！');
+                return;
+            }
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                selectedOption = answers[currentQuestion] ? 
+                    questions[currentQuestion].options.findIndex(o => o.dim === answers[currentQuestion]) : null;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        // 计算结果
+        function calculateResult() {
+            const scores = { E:0, I:0, T:0, F:0, J:0, P:0, S:0, N:0 };
+            answers.forEach(dim => { if(dim) scores[dim]++; });
+            
+            const firstDim = scores.E >= scores.I ? 'E' : 'I';
+            const secondDim = scores.J >= scores.P ? 'J' : 'P';
+            
+            return {
+                type: firstDim + secondDim,
+                scores: scores
+            };
+        }
+
+        // 显示结果
+        function showResult() {
+            quizPage.classList.remove('active');
+            resultPage.classList.add('active');
+            
+            const result = calculateResult();
+            const typeData = personalityTypes[result.type] || personalityTypes["EJ"];
+            
+            typeBadge.textContent = result.type;
+            resultTitle.textContent = typeData.title;
+            resultPreviewText.textContent = typeData.preview;
+            
+            // 保存结果到 localStorage
+            localStorage.setItem('testResult', JSON.stringify({
+                type: result.type,
+                scores: result.scores,
+                timestamp: new Date().toISOString()
+            }));
+        }
+
+        // 重新测试
+        function restartQuiz() {
+            resultPage.classList.remove('active');
+            startPage.classList.add('active');
+        }
+
+        // 切换 Tab
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        // 验证并解锁
+        function validateAndUnlock() {
+            const key = document.getElementById('unlock-key').value.trim().toUpperCase();
+            const errorEl = document.getElementById('key-error');
+            
+            if (!key) {
+                errorEl.textContent = '请输入解锁密钥';
+                errorEl.style.color = '#e53e3e';
+                return;
+            }
+
+            // 验证密钥格式：XX-AAAA0000（类型 -4 字母 4 数字）
+            const keyPattern = /^[A-Z]{2}-[A-Z]{4}\d{4}$/;
+            if (!keyPattern.test(key)) {
+                errorEl.textContent = '密钥格式错误，应为：EJ-ABCD1234';
+                errorEl.style.color = '#e53e3e';
+                return;
+            }
+
+            // 从密钥库验证
+            const keys = JSON.parse(localStorage.getItem('keyStore') || '[]');
+            const keyData = keys.find(k => k.key === key);
+            
+            if (!keyData) {
+                errorEl.textContent = '❌ 密钥不存在，请检查后重试';
+                errorEl.style.color = '#e53e3e';
+                return;
+            }
+            
+            if (keyData.status === 'used') {
+                errorEl.textContent = '❌ 密钥已使用，如需帮助请联系客服';
+                errorEl.style.color = '#e53e3e';
+                return;
+            }
+            
+            // 获取测试结果
+            const testResult = JSON.parse(localStorage.getItem('testResult') || '{}');
+            const keyType = key.split('-')[0];
+            
+            // 验证类型匹配
+            if (testResult.type && testResult.type !== keyType) {
+                errorEl.textContent = `密钥不匹配！您的结果是${testResult.type}，密钥是${keyType}`;
+                errorEl.style.color = '#e53e3e';
+                return;
+            }
+            
+            // 更新密钥状态为已使用
+            keyData.status = 'used';
+            keyData.usedAt = new Date().toISOString();
+            localStorage.setItem('keyStore', JSON.stringify(keys));
+
+            // 验证通过
+            errorEl.textContent = '✅ 验证成功，正在跳转...';
+            errorEl.style.color = '#48bb78';
+            
+            setTimeout(() => {
+                window.location.href = `report.html?type=${keyType}&key=${key}`;
+            }, 1000);
+        }
+
+        // 支持回车键
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyInput = document.getElementById('unlock-key');
+            if (keyInput) {
+                keyInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') validateAndUnlock();
+                });
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
