@@ -255,7 +255,6 @@
                         <th>密钥</th>
                         <th>类型</th>
                         <th>状态</th>
-                        <th>分发时间</th>
                         <th>使用时间</th>
                     </tr>
                 </thead>
@@ -330,7 +329,6 @@
                     key: record.fields.Key || '',
                     type: record.fields.Type || '',
                     status: record.fields.Status || 'available',
-                    distributedAt: record.fields.DistributedAt || null,
                     usedAt: record.fields.UsedAt || null
                 }));
                 
@@ -373,8 +371,7 @@
                     fields: {
                         Key: key,
                         Type: t,
-                        Status: 'available',
-                        CreatedAt: new Date().toISOString()
+                        Status: 'available'
                     }
                 });
             }
@@ -390,6 +387,8 @@
                 });
                 
                 const data = await response.json();
+                
+                console.log('生成密钥响应:', data);
                 
                 if (data.error) {
                     showToast('❌ 生成失败：' + data.error.message);
@@ -437,8 +436,7 @@
                             },
                             body: JSON.stringify({
                                 fields: {
-                                    Status: 'distributed',
-                                    DistributedAt: new Date().toISOString()
+                                    Status: 'distributed'
                                 }
                             })
                         });
@@ -495,7 +493,6 @@
                     <td style="font-family:monospace;font-weight:600;color:#667eea;">${k.key}</td>
                     <td>${getTypeName(k.type)}</td>
                     <td><span class="status-badge status-${k.status}">${getStatusName(k.status)}</span></td>
-                    <td>${k.distributedAt ? formatTime(k.distributedAt) : '-'}</td>
                     <td>${k.usedAt ? formatTime(k.usedAt) : '-'}</td>
                 </tr>
             `).join('');
