@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度性格测试 - 发现真实的自己</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .page {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .feature .icon {
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .note {
+            margin-top: 20px;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 10%;
+        }
+
+        .question-count {
+            text-align: right;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .question-card {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 18px 24px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #4a5568;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .result-card {
+            text-align: center;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        #result-title {
+            font-size: 1.8rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .result-preview {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+
+        #result-preview-text {
+            color: #4a5568;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .locked-content {
+            background: linear-gradient(135deg, #fff5f7 0%, #fed7e2 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 2px dashed #f687b3;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .locked-content h3 {
+            color: #742a5d;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+
+        .premium-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .premium-features li {
+            padding: 10px 0;
+            color: #742a5d;
+            font-size: 1rem;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #f687b3 0%, #ed64a6 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(246, 135, 179, 0.4);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(246, 135, 179, 0.5);
+        }
+
+        .price {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .guarantee {
+            margin-top: 15px;
+            color: #97266d;
+            font-size: 0.85rem;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                padding: 30px 20px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary {
+                padding: 15px 40px;
+                font-size: 1.1rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 15px 18px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 开始页面 -->
+        <div id="start-page" class="page active">
+            <div class="hero">
+                <h1>🔮 深度性格测试</h1>
+                <p class="subtitle">10 道精选题目，揭示你内心深处的性格密码</p>
+                <div class="features">
+                    <div class="feature">
+                        <span class="icon">🎯</span>
+                        <span>专业心理学基础</span>
+                    </div>
+                    <div class="feature">
+                        <span class="icon">⏱️</span>
+                        <span>仅需 3 分钟</span>
+                    </div>
+                    <div class="feature">
+                        <span class="icon"></span>
+                        <span>详细分析报告</span>
+                    </div>
+                </div>
+                <button id="start-btn" class="btn-primary">开始测试</button>
+                <p class="note">已有 100,000+ 用户参与测试</p>
+            </div>
+        </div>
+
+        <!-- 测试页面 -->
+        <div id="quiz-page" class="page">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress-fill"></div>
+                </div>
+                <div class="question-count">
+                    <span id="current-q">1</span> / 10
+                </div>
+            </div>
+            
+            <div class="question-card">
+                <h2 id="question-text" class="question-text"></h2>
+                <div id="options" class="options"></div>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="page">
+            <div class="result-card">
+                <div class="result-header">
+                    <div class="type-badge" id="type-badge"></div>
+                    <h2 id="result-title"></h2>
+                </div>
+                
+                <div class="result-preview">
+                    <p id="result-preview-text"></p>
+                </div>
+
+                <div class="locked-content">
+                    <div class="lock-icon">🔒</div>
+                    <h3>解锁完整报告</h3>
+                    <ul class="premium-features">
+                        <li>✨ 详细性格维度分析</li>
+                        <li>📈 职业匹配度评估</li>
+                        <li> 情感关系兼容性</li>
+                        <li>🎁 专属成长建议</li>
+                        <li>📱 可下载报告 PDF</li>
+                    </ul>
+                    <button id="unlock-btn" class="btn-premium">
+                        <span class="price">¥1.99</span>
+                        <span>立即解锁</span>
+                    </button>
+                    <p class="guarantee">🔐 安全支付 · 随时查看</p>
+                </div>
+
+                <button id="restart-btn" class="btn-secondary">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试题目数据
+        const questions = [
+            {
+                text: "在社交聚会上，你通常会？",
+                options: [
+                    { text: "主动认识新朋友，享受成为焦点", type: "E" },
+                    { text: "和熟悉的人聊天，保持舒适圈", type: "I" },
+                    { text: "观察他人，选择性参与", type: "A" },
+                    { text: "帮忙组织活动，照顾他人", type: "F" }
+                ]
+            },
+            {
+                text: "面对重要决策时，你更倾向于？",
+                options: [
+                    { text: "列出利弊分析，理性判断", type: "T" },
+                    { text: "听从内心感受，追随直觉", type: "F" },
+                    { text: "咨询他人意见，综合考虑", type: "A" },
+                    { text: "快速决定，边做边调整", type: "P" }
+                ]
+            },
+            {
+                text: "你的工作风格更接近？",
+                options: [
+                    { text: "制定详细计划，按部就班", type: "J" },
+                    { text: "灵活应对，随机应变", type: "P" },
+                    { text: "追求完美，注重细节", type: "N" },
+                    { text: "把握大局，不拘小节", type: "S" }
+                ]
+            },
+            {
+                text: "学习新知识时，你更喜欢？",
+                options: [
+                    { text: "系统学习，建立完整框架", type: "S" },
+                    { text: "探索兴趣点，跳跃式学习", type: "N" },
+                    { text: "实践操作，边做边学", type: "P" },
+                    { text: "理论先行，理解原理", type: "T" }
+                ]
+            },
+            {
+                text: "遇到冲突时，你的反应是？",
+                options: [
+                    { text: "直接面对，寻求解决方案", type: "T" },
+                    { text: "避免冲突，保持和谐", type: "F" },
+                    { text: "冷静分析，找出根源", type: "I" },
+                    { text: "寻求第三方调解", type: "A" }
+                ]
+            },
+            {
+                text: "周末你更愿意如何度过？",
+                options: [
+                    { text: "和朋友聚会，外出活动", type: "E" },
+                    { text: "独处充电，做自己喜欢的事", type: "I" },
+                    { text: "尝试新鲜事物，探索未知", type: "N" },
+                    { text: "完成计划好的事情", type: "J" }
+                ]
+            },
+            {
+                text: "描述你的沟通风格？",
+                options: [
+                    { text: "直接明了，直奔主题", type: "T" },
+                    { text: "委婉温和，考虑他人感受", type: "F" },
+                    { text: "逻辑清晰，条理分明", type: "S" },
+                    { text: "富有想象力，善于比喻", type: "N" }
+                ]
+            },
+            {
+                text: "对于未来，你的态度是？",
+                options: [
+                    { text: "有清晰规划和目标", type: "J" },
+                    { text: "保持开放，顺其自然", type: "P" },
+                    { text: "充满期待和想象", type: "N" },
+                    { text: "关注当下，脚踏实地", type: "S" }
+                ]
+            },
+            {
+                text: "团队合作中，你通常扮演？",
+                options: [
+                    { text: "领导者，统筹全局", type: "E" },
+                    { text: "执行者，完成任务", type: "S" },
+                    { text: "创意者，提供想法", type: "N" },
+                    { text: "协调者，促进合作", type: "F" }
+                ]
+            },
+            {
+                text: "压力之下，你会？",
+                options: [
+                    { text: "更加专注，效率提升", type: "J" },
+                    { text: "寻求支持，与人倾诉", type: "E" },
+                    { text: "独自消化，自我调节", type: "I" },
+                    { text: "暂时逃避，调整状态", type: "P" }
+                ]
+            }
+        ];
+
+        // 性格类型结果
+        const personalityTypes = {
+            "EJ": {
+                title: "🌟 魅力领导者",
+                preview: "你天生具有领导才能，善于组织和管理。你的外向性格让你轻松建立人脉，判断力使你能够做出明智决策。"
+            },
+            "EP": {
+                title: "🎨 创意探索者",
+                preview: "你充满活力和创造力，喜欢尝试新事物。你的适应能力让你在各种环境中都能如鱼得水。"
+            },
+            "IJ": {
+                title: "🏆 稳健策划师",
+                preview: "你深思熟虑，做事有条理。你的内省让你能够深入思考，计划性使你能够稳步达成目标。"
+            },
+            "IP": {
+                title: "🦋 自由思想家",
+                preview: "你独立而灵活，追求内心的自由。你的适应性让你能够从容应对变化，保持内心的平静。"
+            },
+            "TF": {
+                title: "⚖️ 平衡协调者",
+                preview: "你兼具理性和感性，能够在逻辑和情感之间找到平衡。这让你成为优秀的沟通者和调解者。"
+            },
+            "NS": {
+                title: " 实践创新者",
+                preview: "你既有远见又注重实际，能够将创意落地。你的务实精神让你能够把想法变为现实。"
+            }
+        };
+
+        // 状态管理
+        let currentQuestion = 0;
+        let answers = [];
+        let resultType = "";
+
+        // DOM 元素
+        const startPage = document.getElementById('start-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultPage = document.getElementById('result-page');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const unlockBtn = document.getElementById('unlock-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const progressFill = document.getElementById('progress');
+        const currentQSpan = document.getElementById('current-q');
+        const typeBadge = document.getElementById('type-badge');
+        const resultTitle = document.getElementById('result-title');
+        const resultPreviewText = document.getElementById('result-preview-text');
+
+        // 初始化
+        function init() {
+            startBtn.addEventListener('click', startQuiz);
+            restartBtn.addEventListener('click', restartQuiz);
+            unlockBtn.addEventListener('click', showUnlockModal);
+        }
+
+        // 开始测试
+        function startQuiz() {
+            startPage.classList.remove('active');
+            quizPage.classList.add('active');
+            currentQuestion = 0;
+            answers = [];
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionText.textContent = question.text;
+            currentQSpan.textContent = currentQuestion + 1;
+            progressFill.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option.text;
+                optionEl.addEventListener('click', () => selectOption(option.type));
+                optionsContainer.appendChild(optionEl);
+            });
+        }
+
+        // 选择答案
+        function selectOption(type) {
+            answers.push(type);
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                setTimeout(showQuestion, 300);
+            } else {
+                setTimeout(showResult, 300);
+            }
+        }
+
+        // 计算结果
+        function calculateResult() {
+            const typeCount = {};
+            answers.forEach(type => {
+                typeCount[type] = (typeCount[type] || 0) + 1;
+            });
+            
+            // 简化计算：根据主要倾向确定类型
+            const E = (typeCount['E'] || 0) + (typeCount['J'] || 0);
+            const I = (typeCount['I'] || 0) + (typeCount['P'] || 0);
+            const T = (typeCount['T'] || 0);
+            const F = (typeCount['F'] || 0);
+            
+            const firstDim = E >= I ? 'E' : 'I';
+            const secondDim = T >= F ? 'J' : 'P';
+            
+            return firstDim + secondDim;
+        }
+
+        // 显示结果
+        function showResult() {
+            quizPage.classList.remove('active');
+            resultPage.classList.add('active');
+            
+            resultType = calculateResult();
+            const result = personalityTypes[resultType] || personalityTypes["TF"];
+            
+            typeBadge.textContent = resultType;
+            resultTitle.textContent = result.title;
+            resultPreviewText.textContent = result.preview;
+        }
+
+        // 重新测试
+        function restartQuiz() {
+            resultPage.classList.remove('active');
+            startPage.classList.add('active');
+        }
+
+        // 解锁付费内容
+        function showUnlockModal() {
+            alert(' 感谢参与测试！\n\n完整报告包含：\n• 详细性格维度分析\n• 职业发展建议\n• 人际关系指南\n• 个人成长路径\n\n支付 ¥9.9 即可解锁完整报告！\n\n（这是演示版本，实际需接入支付系统）');
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
