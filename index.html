@@ -374,17 +374,17 @@
                             <div class="qr-container">
                                 <div class="qr-section">
                                     <h4>💰 收款码</h4>
-                                    <img src="Picture/收款码.png" alt="收款码" class="qr-code">
+                                    <img src="./收款码.png" alt="收款码" class="qr-code">
                                     <p class="qr-tip">微信扫码支付 ¥1.99</p>
                                 </div>
                                 <div class="qr-section">
                                     <h4>🤖 客服微信</h4>
-                                    <img src="Picture/客服微信.png" alt="客服微信" class="qr-code">
+                                    <img src="./客服微信.png" alt="客服微信" class="qr-code">
                                     <p class="qr-tip">扫码添加客服</p>
                                 </div>
                             </div>
                             <div class="tips">
-                                <p>✅ 付款后添加客服微信</p>
+                                <p>✅ 付款后添加客服微信：wzsOctober</p>
                                 <p>✅ 客服发送解锁密钥</p>
                                 <p>✅ 返回本网页输入密钥解锁报告</p>
                             </div>
@@ -400,7 +400,7 @@
                                 <p>💡 密钥获取方式：</p>
                                 <ol>
                                     <li>扫码支付 ¥1.99</li>
-                                    <li>添加客服微信</li>
+                                    <li>添加客服微信：wzsOctober</li>
                                     <li>发送付款截图</li>
                                     <li>客服发送解锁密钥</li>
                                 </ol>
@@ -417,76 +417,96 @@
     </div>
 
     <script>
-        // 测试题目 - 基于 MBTI 理论
+        // 测试题目 - 基于 MBTI 理论（每题 4 个选项）
         const questions = [
             {
                 text: "在社交聚会上，你通常会？",
                 options: [
                     { text: "主动认识新朋友，享受成为焦点", dim: "E" },
-                    { text: "和熟悉的人聊天，保持舒适圈", dim: "I" }
+                    { text: "和熟悉的人聊天，保持舒适圈", dim: "I" },
+                    { text: "观察他人，选择性参与交流", dim: "I" },
+                    { text: "帮忙组织活动，照顾大家", dim: "E" }
                 ]
             },
             {
                 text: "面对重要决策时，你更倾向于？",
                 options: [
                     { text: "列出利弊分析，理性判断", dim: "T" },
-                    { text: "听从内心感受，追随直觉", dim: "F" }
+                    { text: "听从内心感受，追随直觉", dim: "F" },
+                    { text: "咨询他人意见，综合考虑", dim: "F" },
+                    { text: "快速决定，边做边调整", dim: "P" }
                 ]
             },
             {
                 text: "你的工作风格更接近？",
                 options: [
                     { text: "制定详细计划，按部就班", dim: "J" },
-                    { text: "灵活应对，随机应变", dim: "P" }
+                    { text: "灵活应对，随机应变", dim: "P" },
+                    { text: "追求完美，注重细节", dim: "J" },
+                    { text: "把握大局，不拘小节", dim: "P" }
                 ]
             },
             {
                 text: "学习新知识时，你更喜欢？",
                 options: [
                     { text: "系统学习，建立完整框架", dim: "S" },
-                    { text: "探索兴趣点，跳跃式学习", dim: "N" }
+                    { text: "探索兴趣点，跳跃式学习", dim: "N" },
+                    { text: "实践操作，边做边学", dim: "S" },
+                    { text: "理论先行，理解原理", dim: "N" }
                 ]
             },
             {
                 text: "遇到冲突时，你的反应是？",
                 options: [
                     { text: "直接面对，寻求解决方案", dim: "T" },
-                    { text: "避免冲突，保持和谐", dim: "F" }
+                    { text: "避免冲突，保持和谐", dim: "F" },
+                    { text: "冷静分析，找出根源", dim: "T" },
+                    { text: "寻求第三方调解", dim: "F" }
                 ]
             },
             {
                 text: "周末你更愿意如何度过？",
                 options: [
                     { text: "和朋友聚会，外出活动", dim: "E" },
-                    { text: "独处充电，做自己喜欢的事", dim: "I" }
+                    { text: "独处充电，做自己喜欢的事", dim: "I" },
+                    { text: "尝试新鲜事物，探索未知", dim: "N" },
+                    { text: "完成计划好的事情", dim: "J" }
                 ]
             },
             {
                 text: "描述你的沟通风格？",
                 options: [
                     { text: "直接明了，直奔主题", dim: "T" },
-                    { text: "委婉温和，考虑他人感受", dim: "F" }
+                    { text: "委婉温和，考虑他人感受", dim: "F" },
+                    { text: "逻辑清晰，条理分明", dim: "T" },
+                    { text: "富有想象力，善于比喻", dim: "N" }
                 ]
             },
             {
                 text: "对于未来，你的态度是？",
                 options: [
                     { text: "有清晰规划和目标", dim: "J" },
-                    { text: "保持开放，顺其自然", dim: "P" }
+                    { text: "保持开放，顺其自然", dim: "P" },
+                    { text: "充满期待和想象", dim: "N" },
+                    { text: "关注当下，脚踏实地", dim: "S" }
                 ]
             },
             {
                 text: "团队合作中，你通常扮演？",
                 options: [
                     { text: "领导者，统筹全局", dim: "E" },
-                    { text: "执行者，完成任务", dim: "S" }
+                    { text: "执行者，完成任务", dim: "S" },
+                    { text: "创意者，提供想法", dim: "N" },
+                    { text: "协调者，促进合作", dim: "F" }
                 ]
             },
             {
                 text: "压力之下，你会？",
                 options: [
                     { text: "更加专注，效率提升", dim: "J" },
-                    { text: "寻求支持，与人倾诉", dim: "E" }
+                    { text: "寻求支持，与人倾诉", dim: "E" },
+                    { text: "独自消化，自我调节", dim: "I" },
+                    { text: "暂时逃避，调整状态", dim: "P" }
                 ]
             }
         ];
